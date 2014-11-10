@@ -21,10 +21,10 @@
                ["compile" "com.vnetpublishing.clj.grid.lib.grid.webapp.servlet-config-wrapper"]
                ["compile" "com.vnetpublishing.clj.grid.lib.grid.common.osgi.logger"]
                "javac" "compile"]
-  :repositories [["releases" {:url "http://home.vnetpublishing.com/artifactory/libs-release-local"
-                              :creds :gpg}]
-                 ["snapshots" {:url "http://home.vnetpublishing.com/artifactory/libs-snapshot-local"
-                               :creds :gpg}]]  
+  ;;:repositories [["releases" {:url "http://home.vnetpublishing.com/artifactory/libs-release-local"
+  ;;                            :creds :gpg}]
+  ;;               ["snapshots" {:url "http://home.vnetpublishing.com/artifactory/libs-snapshot-local"
+  ;;                             :creds :gpg}]]  
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [clj-nativedep "0.1.0"]
                  [log4j/log4j "1.2.16" :exclusions [javax.mail/mail
