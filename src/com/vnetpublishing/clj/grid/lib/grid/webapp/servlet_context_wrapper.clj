@@ -66,23 +66,22 @@
   [this path]
   (create-instance com.vnetpublishing.clj.grid.lib.grid.jsp.RequestDispatcher [] path))
 
-; Shouldn't we be implementing this?
 (defn -getResource
   [this path]
-    (.getResource (.get this "_servletcontext")
-                        path))
-          
-; Shouldn't we be implementing this?
-(defn -getResourceAsStream
-  [this path]
-    (.getResourceAsStream (.get this "_servletcontext")
-                        path))
+    (get-resource path))
+
+(defn -getResourceAsStream [this path]
+  (some-> (get-resource path) .openStream))
 
 ; Shouldn't we be implementing this?
 (defn -getResourcePaths
   [this path]
     (.getResourcePaths (.get this "_servletcontext")
                         path))
+
+(defn -getClassLoader
+  [this]
+  (java.lang.ClassLoader/getSystemClassLoader))
 
 (defn -getServerInfo
   [this]
