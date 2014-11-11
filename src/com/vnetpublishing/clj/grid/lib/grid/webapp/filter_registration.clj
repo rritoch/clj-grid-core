@@ -3,7 +3,8 @@
               :extends com.vnetpublishing.clj.grid.lib.mvc.base.Object
               :methods [[postConstructHandler [javax.servlet.ServletContext] void]]
               :implements [javax.servlet.FilterRegistration]
-              :prefix -)
+              :prefix -
+              :main false)
   (:require [com.vnetpublishing.clj.grid.lib.grid.webapp.servlet-context-wrapper])
   (:use [com.vnetpublishing.clj.grid.lib.grid.kernel]
         [com.vnetpublishing.clj.grid.lib.mvc.engine]))
@@ -11,7 +12,8 @@
 (gen-class :name com.vnetpublishing.clj.grid.lib.grid.webapp.FilterRegistration$Dynamic
            :extends  com.vnetpublishing.clj.grid.lib.grid.webapp.FilterRegistration
            :implements [javax.servlet.FilterRegistration$Dynamic]
-           :prefix dyn-)
+           :prefix dyn-
+           :main false)
 
 (defn -AddMappingForServletNames
   [this dispatcher-types is-match-after & servlet-names]
@@ -28,13 +30,6 @@
 (defn -getUrlPatternMappings
   [this]
     nil)
-
-
-; Method 1
-(def Dynamic com.vnetpublishing.clj.grid.lib.grid.webapp.FilterRegistration$Dynamic)
-
-; Method 2
-(def ^{:static true} -Dynamic com.vnetpublishing.clj.grid.lib.grid.webapp.FilterRegistration$Dynamic)
 
 (defn dyn-setAsyncSupported 
   [this is-async-supported]
