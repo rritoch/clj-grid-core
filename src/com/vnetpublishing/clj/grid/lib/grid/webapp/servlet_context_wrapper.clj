@@ -18,7 +18,7 @@
                  (swap! filters assoc filter-name (.createFilter this clz))
                  (create-instance com.vnetpublishing.clj.grid.lib.grid.webapp.FilterRegistration$Dynamic
                                   []
-                                  [this (get @filters filter-name)])))))
+                                  [this {:filter (get @filters filter-name)}])))))
       
 (defmethod -addFilter [String Filter] 
   [this filter-name filter] 
@@ -28,7 +28,7 @@
                  (swap! filters assoc filter-name filter)
                  (create-instance com.vnetpublishing.clj.grid.lib.grid.webapp.FilterRegistration$Dynamic
                                   []
-                                  [this (get @filters filter-name)])))))
+                                  [this {:filter (get @filters filter-name)}])))))
 
 (defmethod -addFilter [String String] [this filter-name clz-name] 
   (let [filters (:filters (deref (.state this)))
@@ -38,7 +38,7 @@
                  (swap! filters assoc filter-name (.createFilter this clz))
                  (create-instance com.vnetpublishing.clj.grid.lib.grid.webapp.FilterRegistration$Dynamic
                                   []
-                                  [this (get @filters filter-name)])))))
+                                  [this {:filter (get @filters filter-name)}])))))
 
 (defn -createFilter
   [this clz]
@@ -70,7 +70,7 @@
          (if (get @filters filter-name)
              (create-instance com.vnetpublishing.clj.grid.lib.grid.webapp.FilterRegistration$Dynamic
                          []
-                         [this (get @filters filter-name)]))))
+                         [this {:filter (get @filters filter-name)}]))))
 
 (defn -getFilterRegistrations
   [this]
