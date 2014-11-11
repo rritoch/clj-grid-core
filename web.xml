@@ -12,12 +12,13 @@
     </description>
 
     <servlet>
-        <servlet-name>VWPServlet</servlet-name>
-        <servlet-class>lib.vwp.servlet.StandardServlet</servlet-class>
+        <servlet-name>GridServlet</servlet-name>
+        <servlet-class>com.vnetpublishing.clj.grid.lib.grid.servlet.StandardServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>VWPServlet</servlet-name>
+        <servlet-name>GridServlet</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 
