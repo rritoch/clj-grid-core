@@ -16,23 +16,46 @@
 
 (defn -AddMappingForServletNames
   [this dispatcher-types is-match-after & servlet-names]
-    nil)
+    (let [ctx (.get this "_context")
+          filter-def (.get this "_filter_def")]
+      (.addFilterMap ctx 
+                     {:filter-name (:filter-name filter-def)
+                      :dispatcher-types dispatcher-types 
+                      :servlet-names servlet-names}
+                     is-match-after)))
 
 (defn -AddMappingForUrlPatterns
-  [this dispatcher-types is-match-after url-patterns]
-    nil)
+  [this dispatcher-types is-match-after & url-patterns]
+    (let [ctx (.get this "_context")
+          filter-def (.get this "_filter_def")]
+         (.addFilterMap ctx
+                        {:filter-name (:filter-name filter-def)
+                         :dispatcher-types dispatcher-types
+                         :url-patterns url-patterns}
+                        is-match-after)))
 
 (defn -getServletNameMappings
   [this]
-    nil)
+    (let [ctx (.get this "_context")
+          filter-def (.get this "_filter_def")
+          filter-maps (.getFilterMaps ctx)]
+         (flatten (keep (partial #(if (= (:filter-name %2) %1)
+                                      (:servlet-names %2))
+                                 (:filter-name filter-def))))))
 
 (defn -getUrlPatternMappings
   [this]
-    nil)
+    (let [ctx (.get this "_context")
+          filter-def (.get this "_filter_def")
+          filter-maps (.getFilterMaps ctx)]
+         (flatten (keep (partial #(if (= (:filter-name %2) %1)
+                                      (:url-patterns %2))
+                                 (:filter-name filter-def))))))
 
 (defn -postConstructHandler
   [this ctx filter-def]
-    nil)
+   (.set this "_context" ctx)
+   (.set this "_filter_def" filter-def))
 
 (defn dyn-setAsyncSupported 
   [this is-async-supported]
