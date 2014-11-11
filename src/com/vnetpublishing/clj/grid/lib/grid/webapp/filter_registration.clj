@@ -41,7 +41,8 @@
           filter-maps (.getFilterMaps ctx)]
          (flatten (keep (partial #(if (= (:filter-name %2) %1)
                                       (:servlet-names %2))
-                                 (:filter-name filter-def))))))
+                                 (:filter-name filter-def))
+                        filter-maps))))
 
 (defn -getUrlPatternMappings
   [this]
@@ -50,7 +51,8 @@
           filter-maps (.getFilterMaps ctx)]
          (flatten (keep (partial #(if (= (:filter-name %2) %1)
                                       (:url-patterns %2))
-                                 (:filter-name filter-def))))))
+                                 (:filter-name filter-def))
+                        filter-maps))))
 
 (defn -postConstructHandler
   [this ctx filter-def]
