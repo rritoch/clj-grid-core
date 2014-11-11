@@ -5,8 +5,14 @@
     ;:implements [javax.servlet.ServletRequest]
     :methods [[postConstructHandler [javax.servlet.ServletConfig javax.servlet.ServletContext] void]]
     :implements [javax.servlet.ServletContext])
+  (:import [javax.servlet Filter])
   (:use [com.vnetpublishing.clj.grid.lib.grid.kernel]
         [com.vnetpublishing.clj.grid.lib.mvc.engine]))
+
+(defmulti -addFilter)
+(defmethod -addFilter [String Class] [this filter-name clz] nil)
+(defmethod -addFilter [String Filter] [this filter-name clz] nil)
+(defmethod -addFilter [String String] [this filter-name clz] nil)
 
 (defn -getAttribute
   [this name]
