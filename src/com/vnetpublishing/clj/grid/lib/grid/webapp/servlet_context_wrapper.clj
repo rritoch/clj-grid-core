@@ -2,7 +2,6 @@
   (:gen-class 
     :name com.vnetpublishing.clj.grid.lib.grid.webapp.ServletContextWrapper
     :extends com.vnetpublishing.clj.grid.lib.mvc.base.Object
-    ;:implements [javax.servlet.ServletRequest]
     :methods [[postConstructHandler [javax.servlet.ServletConfig javax.servlet.ServletContext] void]]
     :implements [javax.servlet.ServletContext])
   (:import [javax.servlet Filter])
@@ -10,9 +9,40 @@
         [com.vnetpublishing.clj.grid.lib.mvc.engine]))
 
 (defmulti -addFilter)
-(defmethod -addFilter [String Class] [this filter-name clz] nil)
-(defmethod -addFilter [String Filter] [this filter-name clz] nil)
-(defmethod -addFilter [String String] [this filter-name clz] nil)
+
+(defmethod -addFilter [String Class] 
+  [this filter-name clz] 
+    (let [filters (:filters (deref (.state this)))]
+         (if (not (get @filters filter-name))
+             (do 
+                 (swap! filters assoc filter-name (.createFilter this clz))
+                 (create-instance com.vnetpublishing.clj.grid.lib.grid.webapp.FilterRegistration$Dynamic
+                                  []
+                                  [this (get @filters filter-name)])))))
+      
+(defmethod -addFilter [String Filter] 
+  [this filter-name filter] 
+  (let [filters (:filters (deref (.state this)))]
+         (if (not (get @filters filter-name))
+             (do 
+                 (swap! filters assoc filter-name filter)
+                 (create-instance com.vnetpublishing.clj.grid.lib.grid.webapp.FilterRegistration$Dynamic
+                                  []
+                                  [this (get @filters filter-name)])))))
+
+(defmethod -addFilter [String String] [this filter-name clz-name] 
+  (let [filters (:filters (deref (.state this)))
+        clz (resolve clz-name)]
+         (if (not (get @filters filter-name))
+             (do 
+                 (swap! filters assoc filter-name (.createFilter this clz))
+                 (create-instance com.vnetpublishing.clj.grid.lib.grid.webapp.FilterRegistration$Dynamic
+                                  []
+                                  [this (get @filters filter-name)])))))
+
+(defn -createFilter
+  [this clz]
+    (create-instance clz []))
 
 (defn -getAttribute
   [this name]
@@ -33,6 +63,22 @@
 (defn -getContextPath
   [this]
     (.getContextPath (.get this "_servletcontext")))
+
+(defn -getFilterRegistration
+  [this filter-name]
+    (let [filters (:filters (deref (.state this)))]
+         (if (get @filters filter-name)
+             (create-instance com.vnetpublishing.clj.grid.lib.grid.webapp.FilterRegistration$Dynamic
+                         []
+                         [this (get @filters filter-name)]))))
+
+(defn -getFilterRegistrations
+  [this]
+    (let [filters (deref (:filters (deref (.state this))))]
+         (zipmap (keys filters) (map (partial (fn [ob f] 
+                                                  (.getFilterRegistration ob f))
+                                              this)
+                                     (keys filters)))))
 
 (defn -getInitParameter
   [this name]
@@ -158,4 +204,5 @@
   [this servletconfig servletcontext]
     (swap! (.state this) assoc :config servletconfig)
     (swap! (.state this) assoc :servlets (atom {}))
+    (swap! (.state this) assoc :filters (atom {}))
     (assign this ["_servletcontext" servletcontext]))

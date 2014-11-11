@@ -1,11 +1,10 @@
 (ns com.vnetpublishing.clj.grid.lib.grid.webapp.filter-registration
   (:gen-class :name com.vnetpublishing.clj.grid.lib.grid.webapp.FilterRegistration
               :extends com.vnetpublishing.clj.grid.lib.mvc.base.Object
-              :methods [[postConstructHandler [javax.servlet.ServletContext] void]]
+              :methods [[postConstructHandler [javax.servlet.ServletContext java.util.Map] void]]
               :implements [javax.servlet.FilterRegistration]
               :prefix -
               :main false)
-  (:require [com.vnetpublishing.clj.grid.lib.grid.webapp.servlet-context-wrapper])
   (:use [com.vnetpublishing.clj.grid.lib.grid.kernel]
         [com.vnetpublishing.clj.grid.lib.mvc.engine]))
 
@@ -29,6 +28,10 @@
 
 (defn -getUrlPatternMappings
   [this]
+    nil)
+
+(defn -postConstructHandler
+  [this ctx filter-def]
     nil)
 
 (defn dyn-setAsyncSupported 
