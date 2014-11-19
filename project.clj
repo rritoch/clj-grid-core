@@ -34,7 +34,8 @@
                  [org.clojure/tools.logging "0.3.0"]
                  ;[javax/javaee-api "7.0"]
                  [org.apache.tomcat/tomcat-jasper "7.0.52"]
-                 [clj-grid-mvc "0.1.0-SNAPSHOT"]]
+                 [clj-grid-mvc "0.1.0-SNAPSHOT"]
+                  [org.apache.tika/tika-core "1.5"]]
   :main grid.core
   :resource-paths ["resources"]
   ;:target-path "WEB-INF/%s/"

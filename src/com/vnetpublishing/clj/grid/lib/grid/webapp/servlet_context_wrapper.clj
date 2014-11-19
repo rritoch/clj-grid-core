@@ -6,9 +6,13 @@
               [addFilterMap [java.util.Map Boolean] void]
               [getFilterMaps [] java.util.List]]
     :implements [javax.servlet.ServletContext])
-  (:import [javax.servlet Filter])
+  (:import [javax.servlet Filter]
+           [org.apache.tika Tika])
   (:use [com.vnetpublishing.clj.grid.lib.grid.kernel]
         [com.vnetpublishing.clj.grid.lib.mvc.engine]))
+
+
+(def mime-detector (Tika.))
 
 (defmulti -addFilter)
 
@@ -101,9 +105,7 @@
 
 (defn -getMimeType
   [this file]
-    (.getInitParameter (.get this "_servletcontext")
-                       file))
-
+    (.detect mime-detector file))
 
 (defn -getMinorVersion
   [this]

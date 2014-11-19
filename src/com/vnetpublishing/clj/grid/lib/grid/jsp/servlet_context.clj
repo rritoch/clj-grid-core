@@ -3,12 +3,14 @@
     :name com.vnetpublishing.clj.grid.lib.grid.jsp.ServletContext
     :extends com.vnetpublishing.clj.grid.lib.mvc.base.Object
     :implements [javax.servlet.ServletContext]
-    :methods [[postConstructHandler [javax.servlet.ServletConfig] void]]
-  )
-  (:use [com.vnetpublishing.clj.grid.lib.grid.kernel])
-  (:require [clojure.java.io :as io]))
+    :methods [[postConstructHandler [javax.servlet.ServletConfig] void]])
+  (:require [com.vnetpublishing.clj.grid.lib.grid.kernel :refer :all]
+            [clojure.java.io :as io])
+  (:import [org.apache.tika Tika]))
 
 ;see https://svn.apache.org/repos/asf/tomcat/tc8.0.x/tags/TOMCAT_8_0_9/java/org/apache/catalina/core/ApplicationContext.java
+
+(def mime-detector (Tika.))
 
 (def ORDERED_LIBS nil)
 
@@ -116,8 +118,8 @@
    [this]
 )
 (defn -getMimeType
-  [this f]
-)
+  [this file]
+    (.detect mime-detector file))
 
 (defn -getMinorVersion
   [this]
