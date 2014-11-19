@@ -4,8 +4,9 @@
      :extends com.vnetpublishing.clj.grid.lib.mvc.base.Object
      :implements [javax.servlet.ServletConfig]
      :methods [[initStandAlone [] void]])
-  (:use [com.vnetpublishing.clj.grid.lib.grid.kernel]
-        [com.vnetpublishing.clj.grid.lib.mvc.engine]))
+  (:require [com.vnetpublishing.clj.grid.lib.grid.http-mapper :as http-mapper]
+        [com.vnetpublishing.clj.grid.lib.grid.kernel :refer :all]
+        [com.vnetpublishing.clj.grid.lib.mvc.engine :refer :all]))
 
 (defn -getInitParameter
   [this name]
@@ -15,7 +16,7 @@
   [this]
   (java.util.Collections/enumeration (.keySet (.get this "_init_params"))))
 
-(defn -getServletName
+(defn -getServletName 
   []
   "Grid-Stand-Alone")
 
@@ -31,9 +32,11 @@
 
 (defn -initStandAlone
   [this]
-  (.addServlet (.getServletContext this)
-               "jsp"
-               "org.apache.jasper.servlet.JspServlet"))
+    (http-mapper/add-suffix-mapping ".jsp" 
+                                    (resolve (symbol "org.apache.jasper.servlet.JspServlet")))
+    (.addServlet (.getServletContext this)
+                 "jsp"
+                 "org.apache.jasper.servlet.JspServlet"))
 
 (defn -postConstructHandler
   [this]

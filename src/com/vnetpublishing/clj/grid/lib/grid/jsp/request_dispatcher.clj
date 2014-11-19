@@ -4,10 +4,10 @@
     :name com.vnetpublishing.clj.grid.lib.grid.jsp.RequestDispatcher
     :extends com.vnetpublishing.clj.grid.lib.mvc.base.Object
     :implements [javax.servlet.RequestDispatcher]
-    :methods [[postConstructHandler [String] void]]
-  )
-  (:use [com.vnetpublishing.clj.grid.lib.grid.kernel]
-        [com.vnetpublishing.clj.grid.lib.mvc.engine]))
+    :methods [[postConstructHandler [String] void]])
+  (:require [com.vnetpublishing.clj.grid.lib.grid.http-mapper :as http-mapper]
+            [com.vnetpublishing.clj.grid.lib.grid.kernel :refer :all]
+            [com.vnetpublishing.clj.grid.lib.mvc.engine :refer :all]))
 
 
 ;see http://tomcat.apache.org/tomcat-8.0-doc/api/index.html?org/apache/jasper/JspC.html
@@ -54,7 +54,7 @@
   [dispatcher request response state]
   
   (let [servletcontext (.getServletContext request)
-        servlet (.getServlet servletcontext "jsp")]
+        servlet (.createServlet servletcontext (http-mapper/map-url (.get dispatcher "_path")))]
      (.setAttribute request javax.servlet.RequestDispatcher/INCLUDE_SERVLET_PATH (.get dispatcher "_path"))
          (binding [*out* *err*]
            (println (str "invoke to: " 

@@ -5,9 +5,10 @@
     ;:implements [javax.servlet.ServletRequest]
     :methods [[postConstructHandler [javax.servlet.ServletConfig] void]]
     :implements [javax.servlet.ServletConfig])
-  (:require [com.vnetpublishing.clj.grid.lib.grid.webapp.servlet-context-wrapper])
-  (:use [com.vnetpublishing.clj.grid.lib.grid.kernel]
-        [com.vnetpublishing.clj.grid.lib.mvc.engine]))
+  (:require [com.vnetpublishing.clj.grid.lib.grid.webapp.servlet-context-wrapper]
+            [com.vnetpublishing.clj.grid.lib.grid.http-mapper :as http-mapper]
+            [com.vnetpublishing.clj.grid.lib.grid.kernel :refer :all]
+            [com.vnetpublishing.clj.grid.lib.mvc.engine :refer :all]))
 
 
 (defn -getInitParameter
@@ -32,6 +33,8 @@
     
     (assign this ["_servletconfig" servletconfig
                   "_servletcontext" servletcontext])
+    (http-mapper/add-suffix-mapping ".jsp" 
+                                    (resolve (symbol "org.apache.jasper.servlet.JspServlet")))
     (.addServlet (.getServletContext this)
                "jsp"
                "org.apache.jasper.servlet.JspServlet")))
