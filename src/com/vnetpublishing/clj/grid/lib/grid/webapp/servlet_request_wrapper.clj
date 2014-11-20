@@ -22,6 +22,10 @@
   [this]
     (.getRequestURI (.get this "_request")))
 
+(defn -getContextPath
+  [this]
+    (.getContextPath (.get this "_request")))
+
 (defn -getMethod
   [this]
     (.getMethod (.get this "_request")))

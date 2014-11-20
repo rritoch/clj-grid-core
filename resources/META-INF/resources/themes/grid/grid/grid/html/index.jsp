@@ -12,6 +12,8 @@
 <h2>Grid Platform</h2>
 <p>Language jsp</p>
 <p>Version <%=  (String)view.get("version") %></p>
+<p>RequestURI <%=  request.getRequestURI() %></p>
+<p>ContextPath <%=  request.getContextPath() %></p>
 </body>
 </html>
 

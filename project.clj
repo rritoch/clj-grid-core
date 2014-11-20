@@ -18,7 +18,9 @@
                ["compile" "com.vnetpublishing.clj.grid.lib.grid.jsp.request-dispatcher"]
                ["compile" "com.vnetpublishing.clj.grid.lib.grid.jsp.servlet-context"]
                ["compile" "com.vnetpublishing.clj.grid.lib.grid.jsp.domain-context"]
+               ["compile" "com.vnetpublishing.clj.grid.lib.grid.webapp.filter-registration"]
                ["compile" "com.vnetpublishing.clj.grid.lib.grid.webapp.servlet-config-wrapper"]
+               ["compile" "com.vnetpublishing.clj.grid.lib.grid.webapp.servlet-request-wrapper"]
                ["compile" "com.vnetpublishing.clj.grid.lib.grid.common.osgi.logger"]
                "javac" "compile"]
   ;;:repositories [["releases" {:url "http://home.vnetpublishing.com/artifactory/libs-release-local"

@@ -86,8 +86,16 @@
          (if *osgi-context*
              (debug "-doPost Have OSGi Context")
              (debug "-doPost Missing OSGi Context"))
-         (.setContentType *servlet-response* "text/html;charset=utf-8")
-         (core/dispatch grid.dispatcher/dispatch))))
+         (let [path (servlet-request-resource-path)
+               r (get-resource path)]
+           (if r
+               ; Deliver static resource
+               (.forward (.getRequestDispatcher *servlet-request* path) 
+                         *servlet-request* 
+                         *servlet-response*)
+               ; Dispatch web-application
+               (do (.setContentType *servlet-response* "text/html;charset=utf-8")
+                   (core/dispatch grid.dispatcher/dispatch)))))))
 
 (defn -doGet
   [this request response]

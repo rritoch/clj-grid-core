@@ -28,8 +28,7 @@
 (defn -doPost
   [this request-in response]
   (let [request (create-instance ServletRequestWrapper [] this request-in)
-        ctx (.getServletContext (.getServletConfig this))
-        path (.getRequestURI request-in)]
+        ctx (.getServletContext (.getServletConfig this))]
        (binding [*compile-path* (.getAttribute ctx ServletContext/TEMPDIR)
                  *local-web-root* (str (.getRealPath ctx "/")
                                        *ds*)
@@ -41,7 +40,8 @@
          (if *osgi-context*
              (debug "-doPost Have OSGi Context")
              (debug "-doPost Missing OSGi Context"))
-         (let [serve-content true
+         (let [path (servlet-request-resource-path)
+               serve-content true
                resource (get-resource path)
                mime-type (.getMimeType ctx path)
                content-type (if (empty? mime-type)
