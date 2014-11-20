@@ -88,11 +88,14 @@
              (debug "-doPost Missing OSGi Context"))
          (let [path (servlet-request-resource-path)
                r (get-resource path)]
-           (if r
+           (if (and r
+                    ; and not directory?
+                    (not (.endsWith (.toString r) "/")))
                ; Deliver static resource
-               (.forward (.getRequestDispatcher *servlet-request* path) 
+               (do  (debug (str "Found resource: " r))
+                    (.forward (.getRequestDispatcher *servlet-request* path) 
                          *servlet-request* 
-                         *servlet-response*)
+                         *servlet-response*))
                ; Dispatch web-application
                (do (.setContentType *servlet-response* "text/html;charset=utf-8")
                    (core/dispatch grid.dispatcher/dispatch)))))))
