@@ -1,1 +1,6 @@
-1. deploy app from OSGi package
+Setup off-webroot tomcat deployment
+Build clj servlet
+Setup http-kit stand-alone deployment
+Setup ruby -> http-kit deployment
+Ensure secure areas are not accessible via web
+Document web application development process

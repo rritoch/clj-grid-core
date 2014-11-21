@@ -9,6 +9,9 @@
               [com.vnetpublishing.clj.grid.lib.grid.osgi.webapp-system-activator :as activator]
               [com.vnetpublishing.clj.grid.lib.grid.servlet.core :as core]
               [clojure.string :as string]
+              [clojure.java.io :as io]
+              [cemerick.pomegranate :as pomegranate]
+              [leiningen.core.project :as lein-proj]
               [com.vnetpublishing.clj.grid.lib.grid.common.constants :as constants]
               [com.vnetpublishing.clj.grid.lib.grid.webapp.servlet-request-wrapper :as servlet-request-wrapper]
               [com.vnetpublishing.clj.grid.lib.grid.kernel :refer :all]
@@ -16,7 +19,8 @@
     (:import [com.vnetpublishing.clj.grid.lib.grid.webapp ServletRequestWrapper]
              [com.vnetpublishing.clj.grid.lib.grid.common.osgi Logger]
              [org.apache.felix.framework.util FelixConstants]
-             [javax.servlet ServletContext]))
+             [javax.servlet ServletContext]
+             [java.io File]))
 
 (def OSGI_CONTEXT_ATTRIBUTE "com.vnetpublishing.clj.grid.lib.grid.servlet.standard-servlet.osgi-context")
 
@@ -24,39 +28,73 @@
   [servlet ctx]
   (.osgiInit servlet ctx))
 
+(defn ^:private read-project
+  [project-filename]
+    (if project-filename
+        (-> project-filename
+            lein-proj/read-raw
+            (assoc :eval-in :servlet)
+            (lein-proj/init-project [:servlet :default]))))
+
+(defn ^:private register-path
+  [root-path cl-path]
+    (let [r-path (if (.isAbsolute (io/file cl-path))
+                     cl-path
+                     (str root-path File/separator cl-path))]
+      (debug (str "Registering path " r-path))
+      #_(pomegranate/add-classpath r-path)))
+
+(defn ^:private init-clojure-env
+  [servletconfig]
+    (debug "Initalizing clojure environment.")
+    (let [cfg-path (.getRealPath (.getServletContext servletconfig)
+                                 (str "WEB-INF/projectref.clj"))
+          cfg-file (io/file cfg-path)
+          cfg (if (.isFile cfg-file) (read-string (slurp cfg-path)))
+          project-filename (:project-file cfg)]
+      (when-let [project (read-project project-filename)]
+         (let [source-paths (concat [(:source-path project)] (:source-paths project))
+               resource-paths (concat [(:resources-path project)] (:resource-paths project))
+               compile-path (:compile-path project)
+               base-dir (.getParent (io/file project-filename))
+               paths (concat source-paths resource-paths [compile-path])]
+              (doseq [p paths]
+                (register-path base-dir p))))))
+   
 (defn -init
   [this servletconfig-in]
-  (binding [*debug-kernel* true]
-    (let [servletconfig (create-instance com.vnetpublishing.clj.grid.lib.grid.webapp.ServletConfigWrapper [] servletconfig-in) 
-          fwc (new com.vnetpublishing.clj.grid.lib.grid.osgi.FrameworkContainer)
-          activator (create-instance com.vnetpublishing.clj.grid.lib.grid.osgi.WebappSystemActivator [])
-          log (Logger.)]
-         (.setLogLevel log (int 4))
-         (swap! (.state this) 
-                assoc 
-                :servlet-config
-                servletconfig)
-         (.setStartHandler activator (partial handle-osgi-start this))
-         (.setConfigVar fwc
-                        "felix.cache.rootdir" 
-                        (.getRealPath (.getServletContext servletconfig)
-                                      "WEB-INF/cache"))
-         (.setConfigVar fwc
-                        FelixConstants/LOG_LEVEL_PROP
-                        "4")
-         (.setConfigVar fwc
+    (init-clojure-env servletconfig-in)
+    (binding [*debug-kernel* true]
+             (let [servletconfig (create-instance com.vnetpublishing.clj.grid.lib.grid.webapp.ServletConfigWrapper [] servletconfig-in) 
+                   fwc (new com.vnetpublishing.clj.grid.lib.grid.osgi.FrameworkContainer)
+                   activator (create-instance com.vnetpublishing.clj.grid.lib.grid.osgi.WebappSystemActivator [])
+                   log (Logger.)]
+                    (.setLogLevel log (int 4))
+                    (swap! (.state this) 
+                           assoc 
+                           :servlet-config
+                           servletconfig)
+                    (.setStartHandler activator (partial handle-osgi-start this))
+                    (.setConfigVar fwc
+                                   "felix.cache.rootdir" 
+                                   (.getRealPath (.getServletContext servletconfig)
+                                                 "WEB-INF/cache"))
+                    (.setConfigVar fwc
+                                   FelixConstants/LOG_LEVEL_PROP
+                                   "4")
+                    (.setConfigVar fwc
                         FelixConstants/LOG_LOGGER_PROP
                         log)
-         (.setConfigVar fwc
+                    (.setConfigVar fwc
                         "org.osgi.framework.system.packages.extra"
                         (string/join "," constants/default-osgi-exports))
-         (.setConfigVar fwc
+                    (.setConfigVar fwc
                         "org.osgi.framework.storage.clean"
                         "onFirstInit")
          (future (binding [*local-web-root* (str (.getRealPath (.getServletContext (.getServletConfig this)) "/")
-             *ds*)]
-         (.launch fwc activator)))
-         (debug "-init complete!"))))
+                        *ds*)]
+                    (.launch fwc activator)))
+                    (debug "-init complete!"))))
 
 (defn -getServletConfig
   [this]
