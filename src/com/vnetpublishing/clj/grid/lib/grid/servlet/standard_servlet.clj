@@ -11,7 +11,6 @@
               [clojure.string :as string]
               [clojure.java.io :as io]
               [cemerick.pomegranate :as pomegranate]
-              [leiningen.core.project :as lein-proj]
               [com.vnetpublishing.clj.grid.lib.grid.common.constants :as constants]
               [com.vnetpublishing.clj.grid.lib.grid.webapp.servlet-request-wrapper :as servlet-request-wrapper]
               [com.vnetpublishing.clj.grid.lib.grid.kernel :refer :all]
@@ -29,9 +28,9 @@
   (.osgiInit servlet ctx))
 
 (defn ^:private register-path
-      [cl-path]
-   (debug (str "Registering path: " r-path)
-   (pomegranate/add-classpath r-path)))
+      [r-path]
+   (debug (str "Registering path: " r-path))
+   (pomegranate/add-classpath r-path))
 
 (defn ^:private init-clojure-env
   [servletconfig]
