@@ -1,4 +1,4 @@
-Setup off-webroot tomcat deployment
+Repair resource resolution order so project sources are used before dependencies
 Build clj servlet
 Setup http-kit stand-alone deployment
 Setup ruby -> http-kit deployment

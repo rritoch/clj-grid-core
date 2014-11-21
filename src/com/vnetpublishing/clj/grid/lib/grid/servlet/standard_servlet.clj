@@ -41,11 +41,14 @@
           cfg (if (.isFile cfg-file) (read-string (slurp cfg-path)))]
       (when-let [project-resource-paths (:project-resource-paths cfg)]
          (doseq [p project-resource-paths]
-           (register-path p)))))
-   
+           (register-path p)))
+      cfg))
+
 (defn -init
   [this servletconfig-in]
-    (init-clojure-env servletconfig-in)
+    (let [project-config (init-clojure-env servletconfig-in)]
+         (swap! (.state this) assoc :project-config project-config))
+    
     (binding [*debug-kernel* true]
              (let [servletconfig (create-instance com.vnetpublishing.clj.grid.lib.grid.webapp.ServletConfigWrapper [] servletconfig-in) 
                    fwc (new com.vnetpublishing.clj.grid.lib.grid.osgi.FrameworkContainer)
@@ -92,8 +95,10 @@
 (defn -doPost
   [this request-in response]
   (let [request (create-instance ServletRequestWrapper [] this request-in)
-        ctx (.getServletContext (.getServletConfig this))]
+        ctx (.getServletContext (.getServletConfig this))
+        project-paths (or (:project-resource-paths (:project-config (deref (.state this)))) [])]
        (binding [*compile-path* (.getAttribute ctx ServletContext/TEMPDIR)
+                 *project-paths* project-paths
                  *local-web-root* (str (.getRealPath ctx "/")
                                        *ds*)
                  *debug-kernel* true
