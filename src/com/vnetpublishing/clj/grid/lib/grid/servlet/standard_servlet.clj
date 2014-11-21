@@ -28,21 +28,10 @@
   [servlet ctx]
   (.osgiInit servlet ctx))
 
-(defn ^:private read-project
-  [project-filename]
-    (if project-filename
-        (-> project-filename
-            lein-proj/read-raw
-            (assoc :eval-in :servlet)
-            (lein-proj/init-project [:servlet :default]))))
-
 (defn ^:private register-path
-  [root-path cl-path]
-    (let [r-path (if (.isAbsolute (io/file cl-path))
-                     cl-path
-                     (str root-path File/separator cl-path))]
-      (debug (str "Registering path " r-path))
-      #_(pomegranate/add-classpath r-path)))
+      [cl-path]
+   (debug (str "Registering path: " r-path)
+   (pomegranate/add-classpath r-path)))
 
 (defn ^:private init-clojure-env
   [servletconfig]
@@ -50,16 +39,10 @@
     (let [cfg-path (.getRealPath (.getServletContext servletconfig)
                                  (str "WEB-INF/projectref.clj"))
           cfg-file (io/file cfg-path)
-          cfg (if (.isFile cfg-file) (read-string (slurp cfg-path)))
-          project-filename (:project-file cfg)]
-      (when-let [project (read-project project-filename)]
-         (let [source-paths (concat [(:source-path project)] (:source-paths project))
-               resource-paths (concat [(:resources-path project)] (:resource-paths project))
-               compile-path (:compile-path project)
-               base-dir (.getParent (io/file project-filename))
-               paths (concat source-paths resource-paths [compile-path])]
-              (doseq [p paths]
-                (register-path base-dir p))))))
+          cfg (if (.isFile cfg-file) (read-string (slurp cfg-path)))]
+      (when-let [project-resource-paths (:project-resource-paths cfg)]
+         (doseq [p project-resource-paths]
+           (register-path p)))))
    
 (defn -init
   [this servletconfig-in]

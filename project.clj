@@ -36,7 +36,7 @@
                  [org.clojure/tools.logging "0.3.0"]
                  ;[javax/javaee-api "7.0"]
                  [org.apache.tomcat/tomcat-jasper "7.0.52"]
-                 [leiningen-core "2.5.0"]
+                 [com.cemerick/pomegranate "0.3.0"]
                  [clj-grid-mvc "0.1.0-SNAPSHOT"]
                   [org.apache.tika/tika-core "1.5"]]
   :main grid.core
