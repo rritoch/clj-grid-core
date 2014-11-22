@@ -107,7 +107,8 @@
                  *servlet-response* response
                  core/*servlet* this
                  *osgi-context* (.getAttribute ctx
-                                               OSGI_CONTEXT_ATTRIBUTE)]
+                                               OSGI_CONTEXT_ATTRIBUTE)
+                 *out* (.getWriter response)]
          (if *osgi-context*
              (debug "-doPost Have OSGi Context")
              (debug "-doPost Missing OSGi Context"))

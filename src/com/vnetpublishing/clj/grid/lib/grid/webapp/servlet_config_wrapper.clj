@@ -35,11 +35,16 @@
                   "_servletcontext" servletcontext])
     (http-mapper/add-suffix-mapping ".jsp" 
                                     (resolve (symbol "org.apache.jasper.servlet.JspServlet")))
+    (http-mapper/add-suffix-mapping ".clj" 
+                                    (resolve (symbol"com.vnetpublishing.clj.grid.lib.grid.servlet.CljServlet")))
     (http-mapper/set-default-mapping (resolve (symbol "com.vnetpublishing.clj.grid.lib.grid.servlet.DefaultServlet")))
     
     (.addServlet (.getServletContext this)
                "jsp"
                "org.apache.jasper.servlet.JspServlet")
+    (.addServlet (.getServletContext this)
+               "clj"
+               "com.vnetpublishing.clj.grid.lib.grid.servlet.CljServlet")
     (.addServlet (.getServletContext this)
                "default"
                "com.vnetpublishing.clj.grid.lib.grid.servlet.DefaultServlet")))

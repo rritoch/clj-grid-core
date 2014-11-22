@@ -77,10 +77,6 @@
    [this uripath]
 )
 
-#_(defn -getContextPath
-   [this]
-)
-
 (defn -getDefaultSessionTrackingModes
   [this]
 )

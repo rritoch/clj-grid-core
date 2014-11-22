@@ -1,5 +1,5 @@
-Repair resource resolution order so project sources are used before dependencies
 Build clj servlet
+Implement OSGi package deployment from extern-project
 Setup http-kit stand-alone deployment
 Setup ruby -> http-kit deployment
 Ensure secure areas are not accessible via web

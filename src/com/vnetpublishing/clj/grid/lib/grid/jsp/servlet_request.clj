@@ -17,6 +17,10 @@
   [this]
   "/")
 
+(defn -getContextPath
+  [this]
+    "/")
+
 (defn -getRequestURI
   [this]
   (.getAttribute this javax.servlet.RequestDispatcher/INCLUDE_SERVLET_PATH))
