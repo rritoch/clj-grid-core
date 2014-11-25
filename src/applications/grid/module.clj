@@ -13,7 +13,6 @@
 (defn get-view
   [name]
   (let [v (module/get-view (:ns (meta #'get-view)) name)]
-       (debug (str "get-view## " v " ."))
        (view/add-template-path v (str (:path (tglobal-get :current-theme)) *ds* "grid" *ds* name))
        v))
 
