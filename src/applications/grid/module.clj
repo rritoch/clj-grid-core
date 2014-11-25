@@ -1,6 +1,7 @@
 (ns applications.grid.module
   (:require  [grid.core]
              [clojure.java.io :refer :all]
+             [clojure.string :as string]
              [com.vnetpublishing.clj.grid.mvc.engine :refer :all]
              [com.vnetpublishing.clj.grid.mvc.base.module :as module]
              [com.vnetpublishing.clj.grid.mvc.base.view :as view]
@@ -18,5 +19,14 @@
 
 (defn --construct
   []
-    (let [base-path (.toString (.getParent (as-file (:file (meta #'marker)))))]
-      (ns-set (:ns (meta #'--construct)) "_basePath" base-path)))
+    (debug (str "applications.grid.module --construct"))
+    (let [t-ns (:ns (meta #'--construct))
+          f (:file (meta #'marker))
+          sf (if (and f
+                      (not= f "NO_SOURCE_FILE"))
+                 (as-file f))
+          base-path (if sf 
+                        (.toString (.getParent sf))
+                        (str (string/join *ds* (butlast (string/split (.toString t-ns) #"\.")))
+                             *ds*))]
+      (ns-set t-ns "_basePath" base-path)))
