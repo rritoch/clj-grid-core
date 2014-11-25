@@ -1,34 +1,35 @@
 (ns com.vnetpublishing.clj.grid.lib.grid.jsp.domain-context
-  (:gen-class 
-     :name com.vnetpublishing.clj.grid.lib.grid.jsp.DomainContext
-     :extends com.vnetpublishing.clj.grid.lib.mvc.base.Object
-     :implements [javax.servlet.ServletConfig]
-     :methods [[initStandAlone [] void]])
+  (:gen-class :name com.vnetpublishing.clj.grid.lib.grid.jsp.DomainContext
+              :implements [javax.servlet.ServletConfig]
+              :state state
+              :init init
+              :methods [[initStandAlone [] void]
+                        [postConstructHandler [] void]])
   (:require [com.vnetpublishing.clj.grid.lib.grid.http-mapper :as http-mapper]
-        [com.vnetpublishing.clj.grid.lib.grid.kernel :refer :all]
-        [com.vnetpublishing.clj.grid.lib.mvc.engine :refer :all]))
+            [com.vnetpublishing.clj.grid.lib.grid.kernel :refer :all]))
 
 (defn -getInitParameter
   [this name]
-  (get (.get this "_init_params") name))
+    (get (:init-params (deref (.state this))) name))
 
 (defn -getInitParameterNames
   [this]
-  (java.util.Collections/enumeration (.keySet (.get this "_init_params"))))
+    (java.util.Collections/enumeration (.keySet (:init-params (deref (.state this))))))
 
 (defn -getServletName 
   []
-  "Grid-Stand-Alone")
+    "Grid-Stand-Alone")
 
 ; This is our application "container"
 ; Ex: https://svn.apache.org/repos/asf/tomcat/tc8.0.x/tags/TOMCAT_8_0_9/java/org/apache/catalina/core/StandardContext.java
 
 (defn -getServletContext
   [this]
-  (if (not (.get this "_context"))
-      (.set this "_context" 
-        (create-instance com.vnetpublishing.clj.grid.lib.grid.jsp.ServletContext [] this)))
-  (.get this "_context"))
+  (if (:context (deref (.state this)))
+      (:context (deref (.state this)))
+      (let [c (create-instance com.vnetpublishing.clj.grid.lib.grid.jsp.ServletContext [] this)]
+        (swap! (.state this) assoc :context c)
+        c)))
 
 (defn -initStandAlone
   [this]
@@ -51,4 +52,8 @@
 
 (defn -postConstructHandler
   [this]
-  (assign this ["_init_params" {}]))
+    (swap! (.state this) assoc :init-params {}))
+ 
+(defn -init
+  []
+    [[] (atom {})])

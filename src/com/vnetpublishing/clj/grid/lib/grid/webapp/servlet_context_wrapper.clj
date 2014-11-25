@@ -1,15 +1,14 @@
 (ns com.vnetpublishing.clj.grid.lib.grid.webapp.servlet-context-wrapper
-  (:gen-class 
-    :name com.vnetpublishing.clj.grid.lib.grid.webapp.ServletContextWrapper
-    :extends com.vnetpublishing.clj.grid.lib.mvc.base.Object
-    :methods [[postConstructHandler [javax.servlet.ServletConfig javax.servlet.ServletContext] void]
-              [addFilterMap [java.util.Map Boolean] void]
-              [getFilterMaps [] java.util.List]]
-    :implements [javax.servlet.ServletContext])
+  (:gen-class :name com.vnetpublishing.clj.grid.lib.grid.webapp.ServletContextWrapper
+              :methods [[postConstructHandler [javax.servlet.ServletConfig javax.servlet.ServletContext] void]
+                        [addFilterMap [java.util.Map Boolean] void]
+                        [getFilterMaps [] java.util.List]]
+              :implements [javax.servlet.ServletContext]
+              :state state
+              :init init)
   (:import [javax.servlet Filter]
            [org.apache.tika Tika])
-  (:use [com.vnetpublishing.clj.grid.lib.grid.kernel]
-        [com.vnetpublishing.clj.grid.lib.mvc.engine]))
+  (:use [com.vnetpublishing.clj.grid.lib.grid.kernel]))
 
 
 (def mime-detector (Tika.))
@@ -56,23 +55,23 @@
 
 (defn -getAttribute
   [this name]
-    (.getAttribute (.get this "_servletcontext")
+    (.getAttribute (:servletcontext (deref (.state this)))
                    name))
 
 (defn -getAttributeNames
   [this]
-    (.getAttributeNames (.get this "_servletcontext")))
+    (.getAttributeNames (:servletcontext (deref (.state this)))))
 
           
 ; Note: Shouldn't we be wrapping this?
 (defn -getContext
   [this uripath]
-    (.getContext (.get this "_servletcontext")
+    (.getContext (:servletcontext (deref (.state this)))
                    uripath))
 
 (defn -getContextPath
   [this]
-    (.getContextPath (.get this "_servletcontext")))
+    (.getContextPath (:servletcontext (deref (.state this)))))
 
 (defn -getFilterRegistration
   [this filter-name]
@@ -92,16 +91,16 @@
 
 (defn -getInitParameter
   [this name]
-    (.getInitParameter (.get this "_servletcontext")
+    (.getInitParameter (:servletcontext (deref (.state this)))
                        name))
 
 (defn -getInitParameterNames
   [this]
-    (.getInitParameterNames (.get this "_servletcontext")))
+    (.getInitParameterNames (:servletcontext (deref (.state this)))))
 
 (defn -getMajorVersion
   [this]
-    (.getMajorVersion (.get this "_servletcontext")))
+    (.getMajorVersion (:servletcontext (deref (.state this)))))
 
 (defn -getMimeType
   [this file]
@@ -109,17 +108,17 @@
 
 (defn -getMinorVersion
   [this]
-    (.getMinorVersion (.get this "_servletcontext")))
+    (.getMinorVersion (:servletcontext (deref (.state this)))))
 
 ; Shouldn't we be wrapping this?
 (defn -getNamedDispatcher
   [this name]
-    (.getNamedDispatcher (.get this "_servletcontext")
+    (.getNamedDispatcher (:servletcontext (deref (.state this)))
                          name))
 
 (defn -getRealPath
   [this path]
-    (.getRealPath (.get this "_servletcontext")
+    (.getRealPath (:servletcontext (deref (.state this)))
                         path))
 
 (defn -getRequestDispatcher
@@ -136,7 +135,7 @@
 ; Shouldn't we be implementing this?
 (defn -getResourcePaths
   [this path]
-    (.getResourcePaths (.get this "_servletcontext")
+    (.getResourcePaths (:servletcontext (deref (.state this)))
                         path))
 
 (defn -getClassLoader
@@ -145,11 +144,11 @@
 
 (defn -getServerInfo
   [this]
-     (.getServerInfo (.get this "_servletcontext")))
+     (.getServerInfo (:servletcontext (deref (.state this)))))
 
 #_(defn -getServlet
   [this name]
-    (.getServlet (.get this "_servletcontext")
+    (.getServlet (:servletcontext (deref (.state this)))
                    name))
 
 (defn -createServlet
@@ -178,33 +177,33 @@
 
 (defn -getServletContextName
   [this]
-     (.getServletContextName (.get this "_servletcontext")))
+     (.getServletContextName (:servletcontext (deref (.state this)))))
 
 (defn -getServletNames
   [this]
-     (.getServletNames (.get this "_servletcontext")))
+     (.getServletNames (:servletcontext (deref (.state this)))))
 
 (defn -getServlets
   [this]
-     (.getServlets (.get this "_servletcontext")))
+     (.getServlets (:servletcontext (deref (.state this)))))
 
 (defn -log
   ([this arg0]
-     (.log (.get this "_servletcontext")
+     (.log (:servletcontext (deref (.state this)))
            arg0))
   ([this arg0 arg1]
-     (.log (.get this "_servletcontext")
+     (.log (:servletcontext (deref (.state this)))
            arg0
            arg1)))
 
 (defn -removeAttribute
   [this name]
-    (.removeAttribute (.get this "_servletcontext")
+    (.removeAttribute (:servletcontext (deref (.state this)))
                       name))
 
 (defn -setAttribute
   [this name obj]
-    (.setAttribute (.get this "_servletcontext")
+    (.setAttribute (:servletcontext (deref (.state this)))
                       name
                       obj))
 
@@ -226,4 +225,10 @@
     (swap! (.state this) assoc :servlets (atom {}))
     (swap! (.state this) assoc :filters (atom {}))
     (swap! (.state this) assoc :filter-maps (atom []))
-    (assign this ["_servletcontext" servletcontext]))
+    (swap! (.state this) assoc :servletcontext servletcontext))
+
+
+(defn -init
+  []
+    [[] (atom {})])
+

@@ -1,38 +1,37 @@
 (ns com.vnetpublishing.clj.grid.lib.grid.webapp.servlet-config-wrapper
-  (:gen-class 
-    :name com.vnetpublishing.clj.grid.lib.grid.webapp.ServletConfigWrapper
-    :extends com.vnetpublishing.clj.grid.lib.mvc.base.Object
-    ;:implements [javax.servlet.ServletRequest]
-    :methods [[postConstructHandler [javax.servlet.ServletConfig] void]]
-    :implements [javax.servlet.ServletConfig])
+  (:gen-class :name com.vnetpublishing.clj.grid.lib.grid.webapp.ServletConfigWrapper
+              :methods [[postConstructHandler [javax.servlet.ServletConfig] void]]
+              :implements [javax.servlet.ServletConfig]
+              :state state
+              :init init)
   (:require [com.vnetpublishing.clj.grid.lib.grid.webapp.servlet-context-wrapper]
             [com.vnetpublishing.clj.grid.lib.grid.http-mapper :as http-mapper]
-            [com.vnetpublishing.clj.grid.lib.grid.kernel :refer :all]
-            [com.vnetpublishing.clj.grid.lib.mvc.engine :refer :all]))
+            [com.vnetpublishing.clj.grid.lib.grid.kernel :refer :all]))
 
 
 (defn -getInitParameter
   [this name]
-    (.getInitParameter (.get this "_servletconfig") name))
+    (.getInitParameter (:servletconfig (deref (.state this))) name))
 
 (defn -getInitParameterNames
   [this]
-    (.getInitParameterNames (.get this "_servletconfig")))
+    (.getInitParameterNames (:servletconfig (deref (.state this)))))
 
 (defn -getServletName
   [this]
-    (.getServletName (.get this "_servletconfig")))
+    (.getServletName (:servletconfig (deref (.state this)))))
 
 (defn -getServletContext
   [this]
-    (.get this "_servletcontext"))
+    (:servletcontext (deref (.state this))))
 
 (defn -postConstructHandler
   [this servletconfig]
   (let [servletcontext (create-instance com.vnetpublishing.clj.grid.lib.grid.webapp.ServletContextWrapper [] this (.getServletContext servletconfig))]
     
-    (assign this ["_servletconfig" servletconfig
-                  "_servletcontext" servletcontext])
+    (swap! (.state this) assoc :servletconfig servletconfig)
+    (swap! (.state this) assoc :servletcontext servletcontext)
+
     (http-mapper/add-suffix-mapping ".jsp" 
                                     (resolve (symbol "org.apache.jasper.servlet.JspServlet")))
     (http-mapper/add-suffix-mapping ".clj" 
@@ -48,4 +47,8 @@
     (.addServlet (.getServletContext this)
                "default"
                "com.vnetpublishing.clj.grid.lib.grid.servlet.DefaultServlet")))
+
+(defn -init
+  []
+    [[] (atom {})])
 

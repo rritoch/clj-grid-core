@@ -1,12 +1,14 @@
 (ns applications.grid.views.grid.grid
-    (:gen-class
-      :name applications.grid.views.grid
-      :extends com.vnetpublishing.clj.grid.lib.mvc.base.View)
-    (:use [com.vnetpublishing.clj.grid.lib.grid.kernel]
-          [com.vnetpublishing.clj.grid.lib.mvc.engine]))
+  (:require [clojure.string :as string]
+            [com.vnetpublishing.clj.grid.mvc.engine :refer :all]
+            [com.vnetpublishing.clj.grid.mvc.base.view :as view]
+            [com.vnetpublishing.clj.grid.mvc.base.module :as module]))
 
-(defn -display
-     [this]
-     (let [module (.getModule this)
-           vwp-model (.getModel module "grid")]
-          (assign this ["version" (.getVersion vwp-model)])))
+(view/make-view)
+
+(defn display
+  []
+    (let [t-ns (:ns (meta #'display))
+          module (view/get-module t-ns)
+          vwp-model (module/get-model module "grid")]
+         (assign t-ns ["version" (ns-call vwp-model 'get-version)])))

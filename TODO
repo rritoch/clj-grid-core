@@ -1,4 +1,5 @@
-Build clj servlet
+Update normal deployment to use fscripts
+Refactor MVC to use functional design
 Implement OSGi package deployment from extern-project
 Setup http-kit stand-alone deployment
 Setup ruby -> http-kit deployment

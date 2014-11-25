@@ -1,5 +1,0 @@
-<plugins xmlns="urn:vnetpublishing:com:clj:grid:plugins">
-   
-   <bundle src="WEB-INF/bundles/clj-grid-version-0.1.0-SNAPSHOT-bundle.jar" active="true" />
-   
-</plugins>

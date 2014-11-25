@@ -1,9 +1,9 @@
 (ns com.vnetpublishing.clj.grid.lib.grid.jsp.servlet-context
-  (:gen-class 
-    :name com.vnetpublishing.clj.grid.lib.grid.jsp.ServletContext
-    :extends com.vnetpublishing.clj.grid.lib.mvc.base.Object
-    :implements [javax.servlet.ServletContext]
-    :methods [[postConstructHandler [javax.servlet.ServletConfig] void]])
+  (:gen-class :name com.vnetpublishing.clj.grid.lib.grid.jsp.ServletContext
+              :implements [javax.servlet.ServletContext]
+              :init init
+              :state state
+              :methods [[postConstructHandler [javax.servlet.ServletConfig] void]])
   (:require [com.vnetpublishing.clj.grid.lib.grid.kernel :refer :all]
             [clojure.java.io :as io])
   (:import [org.apache.tika Tika]))
@@ -16,12 +16,11 @@
 
 (defn -addFilter
   [this filter-name filter-ref]
-  
-)
+    nil)
 
 (defn -addListener
   [this class-ref]
-  nil)
+    nil)
 
 (defn -addServlet
    [this servlet-name servlet-ref]
@@ -214,3 +213,8 @@
        }))
       (swap! (.state this) assoc  :config config)
       (swap! (.state this) assoc :servlets (atom {}))))
+
+
+(defn -init
+  []
+    [[] (atom {})])

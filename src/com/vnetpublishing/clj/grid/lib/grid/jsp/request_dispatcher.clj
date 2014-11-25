@@ -1,13 +1,12 @@
 (ns com.vnetpublishing.clj.grid.lib.grid.jsp.request-dispatcher
   
-  (:gen-class 
-    :name com.vnetpublishing.clj.grid.lib.grid.jsp.RequestDispatcher
-    :extends com.vnetpublishing.clj.grid.lib.mvc.base.Object
-    :implements [javax.servlet.RequestDispatcher]
-    :methods [[postConstructHandler [String] void]])
+  (:gen-class :name com.vnetpublishing.clj.grid.lib.grid.jsp.RequestDispatcher
+              :implements [javax.servlet.RequestDispatcher]
+              :state state
+              :init init
+              :methods [[postConstructHandler [String] void]])
   (:require [com.vnetpublishing.clj.grid.lib.grid.http-mapper :as http-mapper]
-            [com.vnetpublishing.clj.grid.lib.grid.kernel :refer :all]
-            [com.vnetpublishing.clj.grid.lib.mvc.engine :refer :all]))
+            [com.vnetpublishing.clj.grid.lib.grid.kernel :refer :all]))
 
 
 ;see http://tomcat.apache.org/tomcat-8.0-doc/api/index.html?org/apache/jasper/JspC.html
@@ -54,11 +53,11 @@
   [dispatcher request response state]
   
   (let [servletcontext (.getServletContext request)
-        servlet (.createServlet servletcontext (http-mapper/map-url (.get dispatcher "_path")))]
-     (.setAttribute request javax.servlet.RequestDispatcher/INCLUDE_SERVLET_PATH (.get dispatcher "_path"))
+        servlet (.createServlet servletcontext (http-mapper/map-url (:path (deref (.state dispatcher)))))]
+     (.setAttribute request javax.servlet.RequestDispatcher/INCLUDE_SERVLET_PATH (:path (deref (.state dispatcher))))
          (binding [*out* *err*]
            (println (str "invoke to: " 
-                         (.get dispatcher "_path")
+                         (:path (deref (.state dispatcher)))
                          " servletcontext: "
                          (class servletcontext)
                          " servlet: "
@@ -77,32 +76,32 @@
   
   (let [servlet-path nil
         path-info nil
-        state (atom {:outter-request request
-                     :outter-response response
-                     :including false
-                     :wrap-request nil
-                     :wrap-response nil
-                     :hrequest nil
-                     :hresponse nil})]
+        r-state (atom {:outter-request request
+                       :outter-response response
+                       :including false
+                       :wrap-request nil
+                       :wrap-response nil
+                       :hrequest nil
+                       :hresponse nil})]
      ; Check compliance???
      ; Wrap Response???
      (if (not (or servlet-path path-info))
        (do
          ; Wrap request??
          ; Apply Request Attributes???
-         (invoke this request response state)
-       )
+         (invoke this request response r-state))
        (do
          ; ???
-       )
-     )
-   )
-)
+       ))))
 
 (defn -include
   [this request response]
-)
+    nil)
 
 (defn -postConstructHandler
   [this path]
-  (assign this ["_path" path]))
+    (swap! (.state this) assoc :path path))
+
+(defn -init
+  []
+    [[] (atom {})])

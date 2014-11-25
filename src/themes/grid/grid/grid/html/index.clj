@@ -1,8 +1,8 @@
 (ns themes.grid.grid.grid.html.index
-  (:use [com.vnetpublishing.clj.grid.lib.mvc.engine]
+  (:use [com.vnetpublishing.clj.grid.mvc.engine]
         [com.vnetpublishing.clj.grid.lib.grid.kernel]))
 
-(script "grid view index layout"
+(fscript "grid view index layout"
     (do (println "<html>")
         (println "<head>")
         (println (str "<title>Grid Platform</title>"))

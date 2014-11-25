@@ -1,8 +1,8 @@
 (ns index
-  (:require [grid.core])
-  (:use [com.vnetpublishing.clj.grid.lib.grid.kernel]))
+  (:require [grid.core]
+            [com.vnetpublishing.clj.grid.lib.grid.kernel :refer :all]))
 
-(script "[index.clj] started..." 
+(fscript "[index.clj] started..." 
   
   ; Load path configuration
   (ginc-once (str "config" *ds* "paths.clj"))
@@ -12,9 +12,10 @@
   (ginc-once (str "config" *ds* "theme_config.clj"))
 
   ; Launch Theme
-  (ginc (str "themes" 
+  (finc (str "themes" 
              *ds* 
              ;(:id (:current-theme (deref (globals)))) 
              (:id (tglobal-get :current-theme))
              *ds* 
-             "dispatch.clj")))
+             "dispatch.clj")
+        (symbol (str "themes." (:id (tglobal-get :current-theme)) ".dispatch"))))

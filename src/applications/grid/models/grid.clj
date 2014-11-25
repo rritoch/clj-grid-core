@@ -1,10 +1,10 @@
 (ns applications.grid.models.grid
-    (:gen-class
-      :name applications.grid.models.grid
-      :methods [[getVersion [] String]]
-      :extends com.vnetpublishing.clj.grid.lib.mvc.base.Model)
-    (:require [com.vnetpublishing.clj.grid.lib.mvc.base.version :as version]))
+  (:require [clojure.string :as string]
+            [com.vnetpublishing.clj.grid.mvc.base.model :as model]
+            [com.vnetpublishing.clj.grid.mvc.base.version :as version]))
 
-(defn -getVersion
-      [this]
-      (clojure.string/join "." (version/getVersion) ))
+(model/make-model)
+
+(defn get-version
+  []
+    (string/join "." (version/get-version)))

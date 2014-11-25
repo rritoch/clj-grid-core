@@ -1,14 +1,13 @@
 (ns com.vnetpublishing.clj.grid.lib.grid.webapp.servlet-request-wrapper
-  (:gen-class 
-    :name com.vnetpublishing.clj.grid.lib.grid.webapp.ServletRequestWrapper
-    :extends com.vnetpublishing.clj.grid.lib.mvc.base.Object
-    ;:implements [javax.servlet.ServletRequest]
-    :methods [[setContext [Object] void]
-              [getContext [] Object]
-              [postConstructHandler [javax.servlet.Servlet javax.servlet.ServletRequest] void]]
-    :implements [javax.servlet.http.HttpServletRequest])
-  (:use [com.vnetpublishing.clj.grid.lib.grid.kernel]
-        [com.vnetpublishing.clj.grid.lib.mvc.engine]))
+  (:gen-class :name com.vnetpublishing.clj.grid.lib.grid.webapp.ServletRequestWrapper
+    
+              :methods [[setContext [Object] void]
+                        [getContext [] Object]
+                        [postConstructHandler [javax.servlet.Servlet javax.servlet.ServletRequest] void]]
+              :implements [javax.servlet.http.HttpServletRequest]
+              :state state
+              :init init)
+  (:require [com.vnetpublishing.clj.grid.lib.grid.kernel :refer :all]))
 
 (defn -getPathInfo
   [this]
@@ -16,27 +15,27 @@
 
 (defn -getServletPath
   [this]
-    (.getServletPath (.get this "_request")))
+    (.getServletPath (:request (deref (.state this)))))
 
 (defn -getRequestURI
   [this]
-    (.getRequestURI (.get this "_request")))
+    (.getRequestURI (:request (deref (.state this)))))
 
 (defn -getContextPath
   [this]
-    (.getContextPath (.get this "_request")))
+    (.getContextPath (:request (deref (.state this)))))
 
 (defn -getMethod
   [this]
-    (.getMethod (.get this "_request")))
+    (.getMethod (:request (deref (.state this)))))
 
 (defn -getQueryString
   [this]
-    (.getQueryString (.get this "_request")))
+    (.getQueryString (:request (deref (.state this)))))
 
 (defn -getRequestDispatcher
   [this path]
-  (let [c (.getServletConfig (.get this "_servlet"))]
+  (let [c (.getServletConfig (:servlet (deref (.state this))))]
        (if (and c
                 path)
             (if (.startsWith path "/")
@@ -60,169 +59,171 @@
 
 (defn -setAttribute
   [this name o]
-    (.setAttribute (.get this "_request")
+    (.setAttribute (:request (deref (.state this)))
                    name 
                    o))
 
 (defn -getAttribute
   [this name]
-    (.getAttribute (.get this "_request")
+    (.getAttribute (:request (deref (.state this)))
                    name))
 
 (defn -getServletContext
   [this]
-    #_(.getServletContext (.get this "_request"))
-    (.getServletContext (.getServletConfig (.get this "_servlet"))))
+    #_(.getServletContext (:request (deref (.state this))))
+    (.getServletContext (.getServletConfig (:servlet (deref (.state this))))))
 
 ; Wrap?
 (defn -getSession
   [this]
-  (.getSession (.get this "_request")))
+  (.getSession (:request (deref (.state this)))))
 
 
 (defn -getAsyncContext
   [this]
-  (.getAsyncContext (.get this "_request")))
+  (.getAsyncContext (:request (deref (.state this)))))
 
 (defn -getAttributeNames
   [this]
-  (.getAttributeNames (.get this "_request")))
+  (.getAttributeNames (:request (deref (.state this)))))
 
 (defn -getCharacterEncoding
   [this]
-  (.getCharacterEncoding (.get this "_request")))
+  (.getCharacterEncoding (:request (deref (.state this)))))
 
 (defn -getContentLength
   [this]
-  (.getContentLength (.get this "_request")))
+  (.getContentLength (:request (deref (.state this)))))
 
 (defn -getContentType
   [this]
-  (.getContentType (.get this "_request")))
+  (.getContentType (:request (deref (.state this)))))
 
 (defn -getDispatcherType
   [this]
-  (.getDispatcherType (.get this "_request")))
+  (.getDispatcherType (:request (deref (.state this)))))
 
 (defn -getInputStream
   [this]
-  (.getInputStream (.get this "_request")))
+  (.getInputStream (:request (deref (.state this)))))
 
 (defn -getLocalAddr
   [this]
-  (.getLocalAddr (.get this "_request")))
+  (.getLocalAddr (:request (deref (.state this)))))
 
 (defn -getLocale
   [this]
-  (.getLocale (.get this "_request")))
+  (.getLocale (:request (deref (.state this)))))
 
 (defn -getLocales
   [this]
-  (.getLocales (.get this "_request")))
+  (.getLocales (:request (deref (.state this)))))
 
 
 (defn -getLocalName
   [this]
-  (.getLocalName (.get this "_request")))
+  (.getLocalName (:request (deref (.state this)))))
 
 (defn -getLocalPort
   [this]
-  (.getLocalPort (.get this "_request")))
+  (.getLocalPort (:request (deref (.state this)))))
 
 (defn -getParameter
   [this name]
-  (.getParameter (.get this "_request")
+  (.getParameter (:request (deref (.state this)))
                  name))
 
 (defn -getParameterMap
   [this]
-  (.getParameterMap (.get this "_request")))
+  (.getParameterMap (:request (deref (.state this)))))
 
 (defn -getParameterNames
   [this]
-  (.getParameterNames (.get this "_request")))
+  (.getParameterNames (:request (deref (.state this)))))
 
 (defn -getParameterValues
   [this name]
-  (.getParameterValues (.get this "_request")
+  (.getParameterValues (:request (deref (.state this)))
                        name))
 
 (defn -getProtocol
   [this]
-  (.getProtocol (.get this "_request")))
+  (.getProtocol (:request (deref (.state this)))))
 
 (defn -getReader
   [this]
-  (.getReader (.get this "_request")))
+  (.getReader (:request (deref (.state this)))))
 
 (defn -getRealPath
   [this]
-  (.getRealPath (.get this "_request")))
+  (.getRealPath (:request (deref (.state this)))))
 
 (defn -getRemoteAddr
   [this]
-  (.getRemoteAddr (.get this "_request")))
+  (.getRemoteAddr (:request (deref (.state this)))))
 
 (defn -getRemoteHost
   [this]
-  (.getRemoteHost (.get this "_request")))
+  (.getRemoteHost (:request (deref (.state this)))))
 
 (defn -getRemotePort
   [this]
-  (.getRemotePort (.get this "_request")))
+  (.getRemotePort (:request (deref (.state this)))))
 
 (defn -getScheme
   [this]
-  (.getScheme (.get this "_request")))
+  (.getScheme (:request (deref (.state this)))))
 
 
 (defn -getServerName
   [this]
-  (.getServerName (.get this "_request")))
+  (.getServerName (:request (deref (.state this)))))
 
 (defn -getServerPort
   [this]
-  (.getServerPort (.get this "_request")))
+  (.getServerPort (:request (deref (.state this)))))
 
 (defn -isAsyncStarted
   [this]
-  (.isAsyncStarted (.get this "_request")))
+  (.isAsyncStarted (:request (deref (.state this)))))
 
 (defn -isAsyncSupported
   [this]
-  (.isAsyncSupported (.get this "_request")))
+  (.isAsyncSupported (:request (deref (.state this)))))
 
 (defn -isSecure
   [this]
-  (.isSecure (.get this "_request")))
+  (.isSecure (:request (deref (.state this)))))
 
 (defn -removeAttribute
   [this name]
-  (.removeAttribute (.get this "_request")
+  (.removeAttribute (:request (deref (.state this)))
                     name))
 
 (defn -setCharacterEncoding
   [this env]
-  (.setCharacterEncoding (.get this "_request")
+  (.setCharacterEncoding (:request (deref (.state this)))
                     env))
 
 (defn -startAsync
   ([this]
-    (.startAsync (.get this "_request")))
+    (.startAsync (:request (deref (.state this)))))
   ([this request response]
-    (.startAsync (.get this "_request") request response)))
+    (.startAsync (:request (deref (.state this))) request response)))
 
 (defn -setContext
    [this context]
-   (.set this "_context" context))
+     (swap! (.state this) assoc :context context))
 
 (defn -getContext
   [this context]
-  (.get this "_context"))
+    (:context (deref (.state this))))
 
 (defn -postConstructHandler
   [this servlet request]
-  (assign this ["_servlet" servlet
-                "_request" request]))
+    (swap! (.state this) assoc :servlet servlet)
+    (swap! (.state this) assoc :request request))
 
-
+(defn -init
+  []
+    [[] (atom {})])

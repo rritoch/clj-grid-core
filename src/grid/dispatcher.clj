@@ -10,6 +10,7 @@
                    (require 'config.core))
                (if (resolve 'config.core/stdconfig)
                    (do (debug "###DISPATCH###")
-                       (grequire (str ".." *ds* "index.clj")))
+                       (frequire (str ".." *ds* "index.clj")
+                                 'index))
                    (throw (Exception. "config.core/stdconfig not defined!"))
                ))))

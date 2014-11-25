@@ -1,13 +1,12 @@
 (ns com.vnetpublishing.clj.grid.lib.grid.jsp.servlet-request
-  
-  (:gen-class 
-    :name com.vnetpublishing.clj.grid.lib.grid.jsp.ServletRequest
-    :extends com.vnetpublishing.clj.grid.lib.mvc.base.Object
-    :methods [[setContext [Object] void]
-              [getContext [] Object]]
-    ;:implements [javax.servlet.ServletRequest]
-    :implements [javax.servlet.http.HttpServletRequest]
-  ))
+  (:gen-class :name com.vnetpublishing.clj.grid.lib.grid.jsp.ServletRequest
+              :methods [[setContext [Object] void]
+                        [getContext [] Object]
+                        [postConstructHandler [] void]]
+              :state state
+              :init init
+              :implements [javax.servlet.http.HttpServletRequest])
+  (:import [java.util HashMap]))
 
 (defn -getPathInfo
   [this]
@@ -35,7 +34,7 @@
 
 (defn -getRequestDispatcher
   [this path]
-  (let [c (.get this "_context")]
+  (let [c (:context (deref (.state this)))]
        (if (and c
                 path)
             (if (.startsWith path "/")
@@ -59,33 +58,36 @@
 
 (defn -setAttribute
   [this name o]
-  (.set (.get this "_attributes") name o))
+    (.put (:attributes (deref (.state this))) name o))
 
 (defn -getAttribute
   [this name]
-  (.get (.get this "_attributes") name))
+  (.get (:attributes (deref (.state this))) name))
 
 (defn -postConstructHandler
   [this]
-  (.set this "_attributes" (new com.vnetpublishing.clj.grid.lib.mvc.base.Object)))
+    (swap! (.state this) assoc :attributes (HashMap.)))
 
 (defn -setContext
    [this context]
-   (.set this "_context" context))
+     (swap! (.state this) assoc :context context))
 
 (defn -getContext
-  [this context]
-  (.get this "_context"))
+  [this]
+    (:context (deref (.state this))))
 
 (defn -getServletContext
   [this]
-  (.getServletContext (.get this "_context")))
+    (.getServletContext (:context (deref (.state this)))))
 
 (defn -getSession
   [this]
-  (new com.vnetpublishing.clj.grid.lib.grid.jsp.Session)
-)
+    (new com.vnetpublishing.clj.grid.lib.grid.jsp.Session))
 
 (defn -getParameter
   [this name]
-  nil)
+    nil)
+
+(defn -init
+  []
+    [[] (atom {})])

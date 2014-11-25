@@ -4,7 +4,7 @@
             [com.vnetpublishing.clj.grid.lib.grid.osgi.exec-system-activator]
             [com.vnetpublishing.clj.grid.lib.grid.servlet.core :as servlet-core]
             [clojure.java.io :as io]
-            [com.vnetpublishing.clj.grid.lib.mvc.base.version :as version]
+            [com.vnetpublishing.clj.grid.mvc.base.version :as version]
             [com.vnetpublishing.clj.grid.lib.grid.common.constants :as constants]
             [clojure.string :as string]
             [grid.dispatcher :refer :all]
@@ -42,7 +42,7 @@
 (defn -main
   [& args]
   
-  (let [ver (version/getVersion)]
+  (let [ver (version/get-version)]
        (debug (str "Starting Grid version "
                    (nth ver 0)
                    "."
