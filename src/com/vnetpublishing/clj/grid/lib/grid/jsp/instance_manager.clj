@@ -1,7 +1,8 @@
 (ns com.vnetpublishing.clj.grid.lib.grid.jsp.instance-manager
   (:gen-class :name com.vnetpublishing.clj.grid.lib.grid.jsp.InstanceManager
               :implements [org.apache.tomcat.InstanceManager]
-              :methods [[initStandAlone [] void]])
+              ;:methods [[initStandAlone [] void]]
+              )
   (:require [com.vnetpublishing.clj.grid.lib.grid.kernel :refer :all]))
 
 
