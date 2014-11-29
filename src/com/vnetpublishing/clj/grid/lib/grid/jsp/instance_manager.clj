@@ -1,10 +1,7 @@
 (ns com.vnetpublishing.clj.grid.lib.grid.jsp.instance-manager
   (:gen-class :name com.vnetpublishing.clj.grid.lib.grid.jsp.InstanceManager
-              :implements [org.apache.tomcat.InstanceManager]
-              ;:methods [[initStandAlone [] void]]
-              )
+              :implements [org.apache.tomcat.InstanceManager])
   (:require [com.vnetpublishing.clj.grid.lib.grid.kernel :refer :all]))
-
 
 (defn -destroyInstance
   [this obj]

@@ -21,7 +21,7 @@
                ["compile" "com.vnetpublishing.clj.grid.lib.grid.webapp.servlet-request-wrapper"]
                ["compile" "com.vnetpublishing.clj.grid.lib.grid.common.osgi.logger"]
                "javac" "compile"]
-  :dependencies [[clj-grid-kernel "0.1.0-SNAPSHOT"]
+  :dependencies [[org.clojure/clojure "1.7.0-alpha4"]
                  [clj-grid-mvc "0.1.0-SNAPSHOT"]
                  [clj-nativedep "0.1.0"]
                  [log4j/log4j "1.2.16" :exclusions [javax.mail/mail
