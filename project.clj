@@ -21,16 +21,15 @@
                ["compile" "com.vnetpublishing.clj.grid.lib.grid.webapp.servlet-request-wrapper"]
                ["compile" "com.vnetpublishing.clj.grid.lib.grid.common.osgi.logger"]
                "javac" "compile"]
-  :dependencies [[org.clojure/clojure "1.7.0-alpha4"]
-                 [clj-grid-mvc "0.1.0-SNAPSHOT"]
-                 [clj-nativedep "0.1.0"]
+  :dependencies [[clj-grid-mvc "0.1.0-SNAPSHOT"]
+                 [clj-nativedep "0.1.0" :exclusions [org.clojure/clojure]]
                  [log4j/log4j "1.2.16" :exclusions [javax.mail/mail
                                                     javax.jms/jms
                                                     com.sun.jdmk/jmxtools
                                                     com.sun.jmx/jmxri]]
-                 [org.clojure/tools.logging "0.3.0"]
+                 [org.clojure/tools.logging "0.3.0" :exclusions [org.clojure/clojure]]
                  [org.apache.tomcat/tomcat-jasper "7.0.52"]
-                 [com.cemerick/pomegranate "0.3.0"]
+                 [com.cemerick/pomegranate "0.3.0" :exclusions [org.clojure/clojure]]
                  [org.apache.tika/tika-core "1.5"]]
   :main grid.core
   :resource-paths ["resources"]
