@@ -13,14 +13,14 @@
 
 (defn get-view
   [name]
-  (let [v (module/get-view (:ns (meta #'get-view)) name)]
+  (let [v (module/get-view (this-ns) name)]
        (view/add-template-path v (str (:path (tglobal-get :current-theme)) *ds* "grid" *ds* name))
        v))
 
 (defn --construct
   []
     (debug (str "applications.grid.module --construct"))
-    (let [t-ns (:ns (meta #'--construct))
+    (let [t-ns (this-ns)
           f (:file (meta #'marker))
           sf (if (and f
                       (not= f "NO_SOURCE_FILE"))
