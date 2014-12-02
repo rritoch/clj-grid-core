@@ -34,7 +34,9 @@
                                      cur-app-id
                                      cur-app)
                                (rest ids)))))
-         (let [app (.get applications app-id)
-               controller-ns (call-other (find-other-ns app 'com.vnetpublishing.clj.grid.mvc.base.module) 
-                                         'get-controller app controller-id)]
-              (controller/dispatch controller-ns true))))
+         (binding [*current-module* (.get applications app-id)] 
+                  (let [m-sym 'com.vnetpublishing.clj.grid.mvc.base.module
+                        controller-ns (call-other (find-other-ns *current-module* m-sym) 
+                                                  'get-controller 
+                                                  *current-module* controller-id)]
+                  (controller/dispatch controller-ns true)))))
