@@ -7,7 +7,7 @@
 
 (controller/make-controller)
 
-(defn method-display
+(defn ^:action display
   []
     (let [m (controller/get-module (this-ns))
           v (ns-call m 'get-view "grid")]
@@ -18,7 +18,8 @@
   
 (defn dispatch
    ([lock]
-   (if (controller/dispatch? (this-ns) lock)
-       (do (method-display)
-           true)))
+     (if (controller/dispatch? (this-ns) lock)
+         (let [action (controller/get-request-parameter "action" "display")]
+              (controller/do-action (this-ns) action)
+              true)))
    ([] (dispatch true)))
